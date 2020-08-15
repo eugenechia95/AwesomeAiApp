@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+from models import *
 
 html_temp = """
 <div style="background-color:tomato;padding:10px">
@@ -19,19 +20,62 @@ def load_css(file_name):
 # gender_nv_model = open("models/naivebayesgendermodel.pkl","rb")
 # gender_clf = joblib.load(gender_nv_model)
 
+model = ResNetUNet(5)
+# model.load_state_dict(torch.load("weights1.pt", map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("best_weight_bs2.pt", map_location=torch.device('cpu')))
+
 def main():
   load_css('style.css')
 
-  st.set_option('deprecation.showfileUploaderEncoding', False)
-  uploaded_file = st.file_uploader("Upload your Image")
-  if uploaded_file is not None:
-    # data = pd.read_csv(uploaded_file)
-    st.image(uploaded_file, caption='Sameple image', use_column_width=True)
+  # st.set_option('deprecation.showfileUploaderEncoding', False)
+  # uploaded_file = st.file_uploader("Upload your Image")
+  # if uploaded_file is not None:
+  #   # data = pd.read_csv(uploaded_file)
+  #   st.image(uploaded_file, caption='Sameple image', use_column_width=True)
+
+  option = st.selectbox('Select an image',(1,2,3,4,5,6,7,8,9,10,11,12,13,14))
+
+  # st.write('You selected:', option)
 
   if st.button("Predict"):
-    '''
-    Can run model predict method here
-    '''
-    st.text("6 cells")
 
+    label_path = "Test/Labels/"
+    img_path = "Test/Images/"
+
+    test_set = NucleiDataset(img_path,label_path, transform = trans, idx=option-1)
+
+    batch_size = 1
+
+    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True, num_workers=1)
+
+    inputs, masks = next(iter(test_loader))
+    st.text("Input Image")
+    plt.imshow(reverse_transform(inputs[0]))
+    plt.show()
+    outputs = model(inputs)
+    st.pyplot()
+
+    st.text('predicted image')
+    threshold = 0.9
+    pred = outputs.to('cpu').detach().numpy()[0]
+    output = np.zeros(pred[0].shape)
+    for i in range(5):
+        pred_i = pred[i]
+        pred_i[pred_i >= threshold] = 1
+        pred_i[pred_i < threshold] = 0
+        output += i * pred_i
+    plt.imshow(output)
+    # st.pyplot()
+
+    st.text('target')
+    mask = masks.numpy()[0]
+    output = np.zeros(mask[0].shape)
+    for i in range(5):
+        mask_i = mask[i]
+        mask_i[mask_i >= threshold] = 1
+        mask_i[mask_i < threshold] = 0
+        output += i * mask_i
+    plt.imshow(output)
+    st.pyplot()
+    
 main()
