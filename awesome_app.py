@@ -15,10 +15,7 @@ def load_css(file_name):
   with open(file_name) as f:
     st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
-model = ResNetUNet(5)
-model.load_state_dict(torch.load("best_weight_bs_1.pt", map_location=torch.device('cpu')))
-
-def predict(option):
+def predict(model, option):
   label_path = "Test/Labels/"
   img_path = "Test/Images/"
   test_set = NucleiDataset(img_path,label_path, transform = trans, idx=option)
@@ -56,6 +53,14 @@ def predict(option):
 
 def main():
   load_css('style.css')
+  st.set_option('deprecation.showfileUploaderEncoding', False)
+  uploaded_file = st.file_uploader("Upload your Weights file. Else, the default will be used.")
+
+  model = ResNetUNet(5)
+  if uploaded_file:
+    model.load_state_dict(torch.load(uploaded_file, map_location=torch.device('cpu')))
+  else:
+    model.load_state_dict(torch.load("best_weight_bs_1.pt", map_location=torch.device('cpu')))
 
   option = st.selectbox('Select an image',(1,2,3,4,5,6,7,8,9,10,11,12,13,14))
 
@@ -66,6 +71,6 @@ def main():
 
   with st.spinner('Please wait...'):
     if st.button("Predict"):
-      predict(option-1)
+      predict(model, option-1)
     
 main()

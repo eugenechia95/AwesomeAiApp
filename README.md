@@ -10,5 +10,5 @@
 - Run application
 `streamlit run awesome_app.py`
 
-![alt text](homepage.png "Main User Interface")
+![alt text](homepage_new.png "Main User Interface")
 ![alt text](predicted_new.png "Predicted Image vs Target")
