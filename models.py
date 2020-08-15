@@ -18,9 +18,6 @@ import copy
 
 class NucleiDataset(Dataset):
     def __init__(self, image_path, mask_path, transform=None, idx=0):
-        print(sorted(os.listdir(image_path)))
-        # self.img_ls = [image_path+i for i in sorted(os.listdir(image_path))]
-        # self.mask_ls = [ mask_path+i for i in sorted(os.listdir(mask_path))]
         self.img_ls = [image_path + sorted(os.listdir(image_path))[idx]]
         self.mask_ls = [ mask_path + sorted(os.listdir(mask_path))[idx]]
         self.transform = transform
@@ -32,8 +29,6 @@ class NucleiDataset(Dataset):
         img_name = self.img_ls[idx]
         img = Image.open(img_name).convert('RGB')
         img.load()
-#         mask_name = self.mask_ls[idx]
-#         mask = np.pad((loadmat(mask_name)['inst_map']>=1).astype(int),12)  
         mask_name = self.mask_ls[idx]
         mask = loadmat(mask_name)['type_map']
         mask = np.pad(mask, 12)

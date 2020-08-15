@@ -9,3 +9,6 @@
 `pip install -r requirements.txt`
 - Run application
 `streamlit run awesome_app.py`
+
+![alt text](homepage.png "Main User Interface")
+![alt text](predicted.png "Predicted Image vs Target")
