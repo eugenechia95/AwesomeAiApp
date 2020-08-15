@@ -16,7 +16,7 @@ def load_css(file_name):
     st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True)
 
 model = ResNetUNet(5)
-model.load_state_dict(torch.load("best_weight_bs2.pt", map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("best_weight_bs_1.pt", map_location=torch.device('cpu')))
 
 def predict(option):
   label_path = "Test/Labels/"
@@ -25,13 +25,21 @@ def predict(option):
 
   batch_size = 1
 
-  test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=True, num_workers=1)
+  test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=1)
 
   inputs, masks = next(iter(test_loader))
-  
   st.text("Input Image")
   plt.imshow(reverse_transform(inputs[0]))
+  st.pyplot()
   outputs = model(inputs)
+
+  st.text('Target')
+  mask = masks.numpy()[0]
+  target = np.zeros(mask[0].shape)
+  for i in range(5):
+      mask_i = mask[i]
+      target += i * mask_i
+  plt.imshow(target, cmap='jet', vmax=np.max(target), vmin=np.min(target))
   st.pyplot()
 
   st.text('Predicted image')
@@ -43,16 +51,7 @@ def predict(option):
       pred_i[pred_i >= threshold] = 1
       pred_i[pred_i < threshold] = 0
       output += i * pred_i
-  plt.imshow(output)
-  st.pyplot()
-
-  st.text('Target')
-  mask = masks.numpy()[0]
-  output1 = np.zeros(mask[0].shape)
-  for i in range(5):
-      mask_i = mask[i]
-      output1 += i * mask_i
-  plt.imshow(output1)
+  plt.imshow(output,  cmap='jet', vmax=np.max(target), vmin=np.min(target))
   st.pyplot()
 
 def main():

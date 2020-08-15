@@ -29,32 +29,50 @@ class NucleiDataset(Dataset):
         img_name = self.img_ls[idx]
         img = Image.open(img_name).convert('RGB')
         img.load()
+#         mask_name = self.mask_ls[idx]
+#         mask = np.pad((loadmat(mask_name)['inst_map']>=1).astype(int),12)  
         mask_name = self.mask_ls[idx]
         mask = loadmat(mask_name)['type_map']
         mask = np.pad(mask, 12)
-        masks = [(mask == v) for v in range(8)]
+#         masks = [(mask == v) for v in range(8)]
+        mask0 = mask == 0
+        mask1 = (mask == 1) 
+        mask2 = mask == 2
+        mask3 = (mask == 3) + (mask == 4)
+        mask4 = (mask == 5) + (mask == 6) + (mask == 7)
+        masks = [mask0, mask1, mask2, mask3, mask4]
         mask = np.stack(masks, axis=0).astype('float')
         if self.transform:
             img = self.transform(img)
 
         return img, mask
 
-
 trans = transforms.Compose([
     transforms.Pad(12),    # given image is 1000x1000, pad it to make it 1024x1024
     transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]) # imagenet normalization
+    transforms.Normalize([0.790595  , 0.67119867, 0.8091853 ], [0.05493367, 0.05985045, 0.04747279]) # imagenet normalization
 ])
 
 def reverse_transform(inp):
     inp = inp.numpy().transpose((1, 2, 0))
-    mean = np.array([0.485, 0.456, 0.406])
-    std = np.array([0.229, 0.224, 0.225])
+    mean = np.array([0.790595  , 0.67119867, 0.8091853 ])
+    std = np.array([0.05493367, 0.05985045, 0.04747279])
     inp = std * inp + mean
     inp = np.clip(inp, 0, 1)
     inp = (inp * 255).astype(np.uint8)
 
     return inp
+
+######################
+# Model Architecture #
+######################
+
+def convrelu(in_channels, out_channels, kernel, padding):
+    return nn.Sequential(
+        nn.Conv2d(in_channels, out_channels, kernel, padding=padding),
+        nn.ReLU(inplace=True),
+    )
+
 
 ######################
 # Model Architecture #
