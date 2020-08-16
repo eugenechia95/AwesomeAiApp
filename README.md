@@ -23,7 +23,7 @@
 `python nuclei_main.py`
 
 ## Contributors
-- **Eugene (1002060) **
+- **Eugene (1002060)**
 - **Hong Pengfei (1002949)**
 - **Lu Jiankun (1002959)**
 - **Peng Shanshan (1002974)**
