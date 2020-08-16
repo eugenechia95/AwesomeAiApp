@@ -12,3 +12,12 @@
 
 ![alt text](homepage_new.png "Main User Interface")
 ![alt text](predicted_new.png "Predicted Image vs Target")
+
+## Using the GUI
+- If you have a customs weights file you want to use for prediction, upload it. Else, the default pre-trained one will be used.
+- Select 1 out of 14 images to predict.
+- Press the predict button to run predictions.
+
+## Training your own model
+- To train the model and generate training results and your own custom weights, run
+`python nuclei_main.py`
