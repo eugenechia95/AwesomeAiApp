@@ -21,3 +21,9 @@
 ## Training your own model
 - To train the model and generate training results and your own custom weights, run
 `python nuclei_main.py`
+
+## Contributors
+- **Eugene (1002060) **
+- **Hong Pengfei (1002949)**
+- **Lu Jiankun (1002959)**
+- **Peng Shanshan (1002974)**
