@@ -232,7 +232,7 @@ def train_model(model, train_loader, test_loader, optimizer, scheduler, num_epoc
                 masks = masks.to(device).float()
                 outputs = model(inputs)
                 val_loss += (weighted_loss(outputs,masks,bce_weight=0.3) / len(inputs) ).item()
-                pred = outputs.to('cpu').detach().numpy()[0]
+                pred = torch.sigmoid(outputs).to('cpu').detach().numpy()[0]
                 for i in range(1,5):
                     threshold = 0.5
                     pred_i = pred[i]
@@ -281,7 +281,7 @@ def save_image(model, inputs, masks, epoch):
     axs[1].imshow(target, cmap='jet', vmax=np.max(target), vmin=np.min(target))
     axs[1].set_title('Target')
 
-    threshold = 0.8
+    threshold = 0.1
     pred = outputs.to('cpu').detach().numpy()[0]
     output = np.zeros(pred[0].shape)
     for i in range(5):

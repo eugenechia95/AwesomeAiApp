@@ -40,8 +40,8 @@ def predict(model, option):
   st.pyplot()
 
   st.text('Predicted image')
-  threshold = 0.8
-  pred = outputs.to('cpu').detach().numpy()[0]
+  threshold = 0.1
+  pred = torch.sigmoid(outputs.to('cpu')).detach().numpy()[0]
   output = np.zeros(pred[0].shape)
   for i in range(5):
       pred_i = pred[i]
