@@ -232,7 +232,7 @@ def train_model(model, train_loader, test_loader, optimizer, scheduler, num_epoc
                 masks = masks.to(device).float()
                 outputs = model(inputs)
                 val_loss += (weighted_loss(outputs,masks,bce_weight=0.3) / len(inputs) ).item()
-                pred = outputs.to('cpu').detach().numpy()[0]
+                pred = torch.sigmoid(outputs).to('cpu').detach().numpy()[0]
                 for i in range(1,5):
                     threshold = 0.5
                     pred_i = pred[i]
